@@ -11,7 +11,7 @@
 
 ## 🎯 Overview
 
-An intelligent knowledge search system that indexes SharePoint documents across multiple sites and provides AI-powered answers using Retrieval-Augmented Generation (RAG). Built for enterprise use with hybrid search, department filtering, and semantic understanding.
+An intelligent knowledge search system that indexes SharePoint documents across multiple sites and provides AI-powered answers using Retrieval-Augmented Generation (RAG). Built for enterprise use with hybrid search, department filtering, analytics dashboard, and semantic understanding.
 
 **Problem Solved:** Finding information across multiple SharePoint sites is time-consuming. This system provides instant, accurate answers with citations instead of just document links.
 
@@ -38,11 +38,20 @@ An intelligent knowledge search system that indexes SharePoint documents across 
 - **Secure**: Azure AD authentication ready
 - **Scalable**: Handles 100+ documents efficiently
 
-### 📊 Analytics & Monitoring
-- Search query logging
-- Performance metrics
-- User analytics
-- System health monitoring
+### 📊 Built-in Analytics & Monitoring
+- **Dashboard Pages**: Dedicated analytics views with Streamlit pages
+- **Search Metrics**: Query patterns, response times, and performance tracking
+- **User Analytics**: Usage trends, popular queries, and search patterns
+- **System Health**: Real-time monitoring and system diagnostics
+- **Query Logging**: Complete audit trail of all searches
+
+### 📁 Universal Document Support
+- **PDF Documents**: Full text extraction and indexing
+- **Word Files**: DOCX parsing and content extraction
+- **Excel Spreadsheets**: XLSX content indexing
+- **PowerPoint**: PPTX slide text extraction
+- **Text Files**: TXT support
+- **Automatic Processing**: Via SharePoint Microsoft Graph API integration
 
 ---
 
@@ -67,7 +76,7 @@ RAG Answer Generation
     ↓
 AI Answer + Citations + Full Search Results
     ↓
-Display to User
+Analytics Logging & Display to User
 ```
 
 ---
@@ -76,12 +85,13 @@ Display to User
 
 | Component | Technology |
 |-----------|-----------|
-| **Frontend** | Streamlit |
+| **Frontend** | Streamlit (multi-page app) |
 | **AI Models** | Azure OpenAI (GPT-4, text-embedding-ada-002) |
 | **Vector Search** | Azure AI Search (hybrid mode) |
 | **Data Source** | SharePoint Online via Microsoft Graph API |
 | **Storage** | Azure Blob Storage |
 | **Authentication** | Azure AD (schema ready) |
+| **Analytics** | Built-in Streamlit pages |
 | **Language** | Python 3.11 |
 
 ---
@@ -97,6 +107,8 @@ Vector Dimensions:    1536 (ada-002)
 Query Response Time:  3-4 seconds
 Search Accuracy:      Hybrid + semantic ranking
 Cost per Query:       ~$0.01
+File Types:          PDF, DOCX, XLSX, PPTX, TXT
+Departments:         5 (HR, Finance, IT, Sales, Legal)
 ```
 
 ---
@@ -152,13 +164,24 @@ AZURE_OPENAI_EMBEDDING_MODEL=text-embedding-ada-002
 # Azure AI Search
 AZURE_SEARCH_ENDPOINT=https://your-search.search.windows.net
 AZURE_SEARCH_KEY=your_key
-AZURE_SEARCH_INDEX_NAME=sharepoint-index
+AZURE_SEARCH_INDEX_NAME=sharepoint-documents
 
-# SharePoint (Microsoft Graph API)
-SHAREPOINT_TENANT_ID=your_tenant_id
-SHAREPOINT_CLIENT_ID=your_client_id
-SHAREPOINT_CLIENT_SECRET=your_secret
-SHAREPOINT_SITE_URL=https://yourtenant.sharepoint.com/sites/yoursite
+# Microsoft Graph API (for SharePoint access)
+GRAPH_TENANT_ID=your_tenant_id
+GRAPH_CLIENT_ID=your_client_id
+GRAPH_CLIENT_SECRET=your_secret
+
+# SharePoint Site URLs
+SHAREPOINT_SITE_HR=https://yourtenant.sharepoint.com/sites/HRDepartment
+SHAREPOINT_SITE_FINANCE=https://yourtenant.sharepoint.com/sites/FinanceDepartment
+SHAREPOINT_SITE_IT=https://yourtenant.sharepoint.com/sites/ITDepartment
+SHAREPOINT_SITE_SALES=https://yourtenant.sharepoint.com/sites/SalesDepartment
+SHAREPOINT_SITE_LEGAL=https://yourtenant.sharepoint.com/sites/LegalDepartment
+
+# Configuration
+CHUNK_SIZE=800
+CHUNK_OVERLAP=100
+TOP_K_RESULTS=5
 ```
 
 ### 4. Index SharePoint Documents
@@ -168,11 +191,11 @@ SHAREPOINT_SITE_URL=https://yourtenant.sharepoint.com/sites/yoursite
 python -m src.search_indexer
 
 # This will:
-# - Connect to SharePoint
-# - Download documents
-# - Create chunks
-# - Generate embeddings
-# - Upload to Azure AI Search
+# - Connect to SharePoint via Microsoft Graph API
+# - Download documents from all sites
+# - Create 800-token chunks with 100-token overlap
+# - Generate embeddings using text-embedding-ada-002
+# - Upload to Azure AI Search with hybrid index
 ```
 
 ### 5. Run Application
@@ -187,17 +210,23 @@ Open browser to `http://localhost:8501`
 
 ## 📖 Usage
 
-### Basic Search
+### Main Search Interface
 
 1. Enter your question in the search box
 2. Select departments to search (HR, Finance, IT, etc.)
-3. Click "Search"
-4. View AI answer with citations + full search results
+3. Adjust number of results (1-10)
+4. Toggle AI answers on/off
+5. Click "Search"
+6. View AI answer with citations + full search results
 
-### AI Answer Toggle
+### Analytics Dashboard
 
-- **ON**: Get direct AI-generated answers with citations
-- **OFF**: See only search results (faster, no GPT-4 cost)
+Navigate to the Analytics page to view:
+- Search query patterns
+- Response time metrics
+- Popular queries
+- Department usage statistics
+- System health indicators
 
 ### Example Queries
 
@@ -207,6 +236,8 @@ Open browser to `http://localhost:8501`
 "Travel expense reimbursement process"
 "IT security guidelines for remote work"
 "Who to contact for HR issues?"
+"Maternity leave policy"
+"Performance review schedule"
 ```
 
 ---
@@ -215,81 +246,106 @@ Open browser to `http://localhost:8501`
 
 ### Technical Skills
 
-- **Hybrid Search Implementation**: Combining vector, keyword, and semantic search
-- **RAG Architecture**: Building Retrieval-Augmented Generation systems
-- **Azure AI Services**: Working with OpenAI, AI Search, Blob Storage
-- **Microsoft Graph API**: Accessing SharePoint programmatically
-- **Cross-Tenant Architecture**: Managing services across different Azure tenants
-- **Embedding Management**: Handling 120+ embeddings efficiently
-- **Prompt Engineering**: Crafting prompts for accurate, cited responses
+- **Hybrid Search Implementation**: Combining vector, keyword, and semantic search for optimal results
+- **RAG Architecture**: Building production-grade Retrieval-Augmented Generation systems
+- **Azure AI Services**: Deep integration with OpenAI, AI Search, and Blob Storage
+- **Microsoft Graph API**: Programmatic SharePoint access across multiple sites
+- **Cross-Tenant Architecture**: Managing services across different Azure and M365 tenants
+- **Embedding Management**: Efficiently handling 120+ vector embeddings
+- **Prompt Engineering**: Crafting precise prompts for accurate, cited responses
+- **Multi-Page Streamlit Apps**: Building analytics dashboards with multiple pages
+- **Production Logging**: Implementing comprehensive query and performance logging
 
 ### Best Practices
 
-- Chunking strategy: 800 tokens with 100 token overlap
-- HNSW algorithm for fast vector search
-- BM25 for keyword relevance  
-- Temperature=0 for factual Q&A
-- Citation system for transparency
-- Error handling and logging
-- Secure credential management
+- **Chunking Strategy**: 800 tokens with 100 token overlap for optimal context
+- **HNSW Algorithm**: Fast approximate nearest neighbor search for vectors
+- **BM25 Scoring**: Effective keyword relevance ranking
+- **Temperature=0**: Deterministic responses for factual Q&A
+- **Citation System**: Complete transparency and source verification
+- **Error Handling**: Graceful degradation and comprehensive logging
+- **Secure Credentials**: Environment variables and .gitignore protection
+- **Analytics First**: Built-in monitoring from day one
 
 ### Challenges Overcome
 
-- Cross-tenant authentication (SharePoint in one tenant, Azure services in another)
-- Optimizing chunk size for best retrieval
-- Balancing search speed vs accuracy
-- Managing Azure credit costs
-- Implementing clean Streamlit UI with advanced features
+- **Cross-Tenant Authentication**: SharePoint in M365 tenant, Azure services in separate subscription
+- **Chunk Size Optimization**: Balancing context completeness vs. retrieval precision
+- **Search Speed vs. Accuracy**: Finding the right balance with hybrid approach
+- **Cost Management**: Staying within Azure credit limits while building production features
+- **Multi-Format Parsing**: Handling PDF, DOCX, XLSX, PPTX consistently via Graph API
+- **Real-time Analytics**: Building responsive dashboard without database overhead
 
 ---
 
 ## 🔐 Security Features
 
-- ✅ Azure AD authentication (schema ready)
-- ✅ Role-based access control (RBAC schema in place)
-- ✅ Secure credential management (environment variables)
-- ✅ No secrets in code or GitHub
-- ✅ API key rotation support
-- ✅ Audit logging for all searches
+- ✅ **Azure AD Authentication** (schema ready for activation)
+- ✅ **Role-Based Access Control** (RBAC schema in place)
+- ✅ **Secure Credential Management** (environment variables only)
+- ✅ **No Secrets in Code** (verified with .gitignore)
+- ✅ **API Key Rotation Support** (environment-based configuration)
+- ✅ **Complete Audit Logging** (all searches tracked)
+- ✅ **Query Sanitization** (input validation and cleaning)
 
 ---
 
 ## 📈 Performance Optimizations
 
-| Optimization | Impact |
-|--------------|--------|
-| HNSW vector index | 4x faster similarity search |
-| Semantic ranking | 30% better relevance |
-| Chunk size tuning | 25% better context retrieval |
-| Hybrid search | Best of vector + keyword |
-| Temperature=0 | Consistent factual answers |
+| Optimization | Impact | Implementation |
+|--------------|--------|----------------|
+| HNSW vector index | 4x faster search | Azure AI Search built-in |
+| Semantic ranking | 30% better relevance | Microsoft's semantic ranker |
+| Chunk size tuning | 25% better retrieval | 800 tokens sweet spot |
+| Hybrid search | Best of all methods | Vector + keyword + semantic |
+| Temperature=0 | Consistent answers | GPT-4 configuration |
+| Query caching | Faster repeat queries | Planned with Redis |
+| Batch indexing | Efficient uploads | Graph API batching |
 
 ---
 
 ## 🚧 Future Enhancements
 
-- [ ] Implement RBAC (role-based access control)
-- [ ] Multi-tenant support for multiple organizations
-- [ ] Analytics dashboard with usage metrics
-- [ ] Query caching with Redis
-- [ ] Docker containerization
-- [ ] CI/CD pipeline with GitHub Actions
-- [ ] Incremental indexing (only new/changed docs)
-- [ ] Support for more file types (Excel, PPT, etc.)
-- [ ] Multi-language support
-- [ ] Voice search integration
+### ✅ Already Implemented
+
+- [x] **Analytics Dashboard** - Built with Streamlit pages for search analytics, user metrics, and system health
+- [x] **Multi-file Type Support** - PDF, DOCX, XLSX, PPTX, TXT via Microsoft Graph API
+- [x] **Query Logging & Metrics** - Complete tracking with timestamps and performance data
+- [x] **RBAC Schema** - Role-based access control structure ready for activation
+- [x] **Department Filtering** - Multi-site search across 5 departments
+- [x] **Security Levels** - Document-level security schema implemented
+
+### 🔮 Planned Features
+
+- [ ] **Activate RBAC** - Enable role-based access control with Azure AD integration
+- [ ] **Multi-tenant Support** - Support multiple organizations in single deployment
+- [ ] **Query Caching with Redis** - Cache frequent queries for sub-second responses
+- [ ] **Docker Containerization** - Package application for easy deployment
+- [ ] **CI/CD Pipeline** - Automated testing and deployment with GitHub Actions
+- [ ] **Incremental Indexing** - Only re-index new/changed documents (vs full re-index)
+- [ ] **Multi-language Support** - Arabic, Hindi, and other language support
+- [ ] **Voice Search** - Speech-to-text search capability
+- [ ] **Advanced Analytics** - ML-powered usage patterns and recommendations
+- [ ] **Bot Integration** - Slack/Teams bot for direct access
+- [ ] **Auto-tagging** - AI-powered document categorization
+
+### 🎯 Next Priority
+
+1. **Incremental Indexing** - Most impactful for production (avoids full re-indexing costs)
+2. **Activate RBAC** - Enable security features already designed in schema
+3. **Docker Containerization** - Simplify deployment across environments
 
 ---
 
 ## 📊 Project Timeline
 
-- **Day 1-2**: Architecture design, Azure setup
-- **Day 3-4**: SharePoint integration, document indexing
-- **Day 5**: Hybrid search implementation
-- **Day 6**: RAG answer generation with citations
-- **Day 7**: UI polish, testing, documentation
+- **Day 1-2**: Architecture design, Azure resource setup, cross-tenant authentication
+- **Day 3-4**: SharePoint integration via Graph API, multi-site document indexing
+- **Day 5**: Hybrid search implementation with vector + keyword + semantic
+- **Day 6**: RAG answer generation with GPT-4 and citation system
+- **Day 7**: Analytics dashboard, UI polish, testing, comprehensive documentation
 
-**Total**: 1 week intensive development
+**Total**: 1 week intensive development + production features
 
 ---
 
@@ -297,27 +353,51 @@ Open browser to `http://localhost:8501`
 
 ### Azure Resources Used
 
-| Resource | Tier | Monthly Cost (estimate) |
-|----------|------|------------------------|
-| Azure OpenAI | Pay-as-you-go | ~$20 |
-| Azure AI Search | Free tier | $0 |
-| Azure Blob Storage | Standard | ~$1 |
-| **Total** | | **~$21/month** |
+| Resource | Tier | Monthly Cost | Usage |
+|----------|------|-------------|-------|
+| Azure OpenAI | Pay-as-you-go | ~$20 | Embeddings + GPT-4 |
+| Azure AI Search | Free tier | $0 | 50MB index limit |
+| Azure Blob Storage | Standard | ~$1 | Document storage |
+| Microsoft Graph API | Included | $0 | With M365 license |
+| **Total** | | **~$21/month** | 100 queries/day |
 
-*Costs for 100 queries/day with free tier maximization*
+### Cost Optimization Strategy
+
+- Maximized use of free tiers (AI Search, some Azure services)
+- Efficient chunking reduces embedding costs
+- Temperature=0 reduces token usage
+- Graph API batch operations minimize calls
+- Ready for Redis caching to reduce repeat query costs
+
+*Actual costs during development: ~$50 from $200 Azure credits*
 
 ---
 
 ## 🤝 Related Projects
 
-This is part of my AI Solutions Architect portfolio:
+This is part of my AI Solutions Architect portfolio, demonstrating progression from fundamentals to enterprise solutions:
 
-- [**Project 1**: Banking Policy AI (Open Source)](https://github.com/krishnaveniraji/banking-policy-ai-assistant) - Python/LangChain/Gemini
-- [**Project 1a**: Banking Policy AI (Azure)](https://github.com/krishnaveniraji/banking-policy-rag-azure) - Copilot Studio/Azure OpenAI
-- [**Project 2**: Invoice Processing Agent](https://github.com/krishnaveniraji/invoice-processing-agent) - Llama 3/Ollama
-- **Project 3**: SharePoint AI Search (This project) - Azure AI Stack
-- **Project 2a**: Invoice Processing (Azure) - *Coming soon*
-- **Project 4**: Credit Card Analyzer - *Coming soon*
+1. [**Banking Policy AI** (Open Source)](https://github.com/krishnaveniraji/banking-policy-ai-assistant)  
+   *Python • LangChain • Google Gemini • ChromaDB*  
+   Shows: RAG fundamentals, coding from scratch
+
+2. [**Banking Policy AI** (Azure Enterprise)](https://github.com/krishnaveniraji/banking-policy-rag-azure)  
+   *Copilot Studio • Azure OpenAI • No-code Platform*  
+   Shows: Enterprise platforms, same problem solved differently
+
+3. [**Invoice Processing Agent**](https://github.com/krishnaveniraji/invoice-processing-agent)  
+   *Llama 3 • Ollama • Multi-agent Systems • Local AI*  
+   Shows: Agentic workflows, privacy-first architecture
+
+4. **SharePoint AI Search** (This Project)  
+   *Azure AI Stack • Hybrid Search • RAG • Multi-tenant*  
+   Shows: Production systems, enterprise features, analytics
+
+5. **Invoice Processing** (Azure) - *Coming March 2026*  
+   *Azure Document Intelligence • GPT-4 • Cosmos DB*
+
+6. **Credit Card Statement Analyzer** - *Coming March 2026*  
+   *Azure Document Intelligence • Custom Models • Analytics*
 
 ---
 
@@ -331,20 +411,33 @@ This project is for portfolio and educational purposes.
 
 **Krishnaveni Raji**
 
-- 📍 Location: Dubai, UAE
-- 💼 LinkedIn: https://www.linkedin.com/in/krishoj/
-- 📧 Email: krishoj@yahoo.com
-- 🎯 Goal: AI Solutions Architect
-- 📚 Currently: Building AI portfolio + AI-102 certification prep
+- 📍 **Location**: Dubai, UAE
+- 💼 **LinkedIn**: [linkedin.com/in/krishoj](https://www.linkedin.com/in/krishoj/)
+- 📧 **Email**: krishoj@yahoo.com
+- 🎯 **Current Goal**: AI Solutions Architect role (AED 60-70K)
+- 📚 **Status**: Building AI portfolio + AI-102 certification prep
+- 🏆 **Background**: 15+ years Microsoft Power Platform experience
+- 🚀 **Journey**: Power Platform Specialist → AI Solutions Architect
+
+### Why This Project Matters
+
+This project demonstrates my transition from traditional Power Platform development to modern AI solutions architecture. It showcases:
+
+- **Technical Depth**: Building RAG systems from first principles
+- **Platform Expertise**: Leveraging Azure AI services effectively
+- **Enterprise Thinking**: Security, analytics, and scalability from day one
+- **Business Value**: Solving real productivity problems at scale
+- **Production Mindset**: Not just POCs, but deployment-ready systems
 
 ---
 
 ## 🙏 Acknowledgments
 
-- Microsoft Learn for Azure AI documentation
-- Streamlit community for UI components
-- OpenAI for language models
-- Azure AI Search team for hybrid search capabilities
+- **Microsoft Learn** for comprehensive Azure AI documentation
+- **Streamlit Community** for excellent UI framework and examples
+- **OpenAI** for GPT-4 and embedding models
+- **Azure AI Search Team** for hybrid search capabilities
+- **Microsoft Graph API** for SharePoint integration patterns
 
 ---
 
@@ -352,18 +445,45 @@ This project is for portfolio and educational purposes.
 
 ### Search Interface
 ![Search Interface](screenshots/search-interface.png)
+*Main search page with department filters and AI answer toggle*
 
 ### AI Answer with Citations
 ![AI Answer](screenshots/ai-answer.png)
+*GPT-4 generated answer with source citations*
 
 ### Hybrid Search Results
 ![Search Results](screenshots/search-results.png)
+*Combined vector, keyword, and semantic search results*
+
+### Analytics Dashboard
+![Analytics](screenshots/analytics-dashboard.png)
+*Built-in analytics showing search patterns and metrics*
 
 ### System Architecture
 ![Architecture](screenshots/architecture.png)
+*Complete system architecture diagram*
+
+---
+
+## 🔗 Quick Links
+
+- [Live Demo](https://sharepoint-ai-search-demo.streamlit.app) *(if deployed)*
+- [Documentation](https://github.com/krishnaveniraji/sharepoint-ai-search/wiki)
+- [Issues](https://github.com/krishnaveniraji/sharepoint-ai-search/issues)
+- [Changelog](https://github.com/krishnaveniraji/sharepoint-ai-search/releases)
 
 ---
 
 **Built with ❤️ in Dubai | March 2026**
 
 *From Power Platform specialist to AI Solutions Architect - one project at a time.*
+
+---
+
+## ⭐ Star This Repository
+
+If you find this project useful or interesting, please consider starring it! It helps others discover the project and motivates continued development.
+
+---
+
+**📊 Project Stats**: 4 weeks planning → 1 week intensive development → Production-grade system with analytics
