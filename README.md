@@ -414,7 +414,7 @@ This project is for portfolio and educational purposes.
 - 📍 **Location**: Dubai, UAE
 - 💼 **LinkedIn**: [linkedin.com/in/krishoj](https://www.linkedin.com/in/krishoj/)
 - 📧 **Email**: krishoj@yahoo.com
-- 🎯 **Current Goal**: AI Solutions Architect role (AED 60-70K)
+- 🎯 **Current Goal**: AI Solutions Architect role
 - 📚 **Status**: Building AI portfolio + AI-102 certification prep
 - 🏆 **Background**: 15+ years Microsoft Power Platform experience
 - 🚀 **Journey**: Power Platform Specialist → AI Solutions Architect
